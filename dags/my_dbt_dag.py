@@ -31,7 +31,9 @@ profile_config = ProfileConfig(
     target_name="dev",
     profile_mapping=RedshiftUserPasswordProfileMapping(
         conn_id=CONNECTION_ID,
-        profile_args={"schema": SCHEMA_NAME},
+        profile_args={"schema": SCHEMA_NAME,
+                      "port": 3921,
+                      },
     ),
 )
 
