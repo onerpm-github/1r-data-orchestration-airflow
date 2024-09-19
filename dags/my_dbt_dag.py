@@ -7,7 +7,7 @@ an Airflow connection and injecting a variable into the dbt project.
 
 from airflow.decorators import dag
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
-from airflow.providers.amazon.aws.operators.redshift import RedshiftSQLOperator
+from airflow.providers.amazon.aws.operators.redshift_sql import RedshiftSQLOperator
 
 # adjust for other database types
 from cosmos.profiles import RedshiftUserPasswordProfileMapping
