@@ -6,16 +6,16 @@ an Airflow connection and injecting a variable into the dbt project.
 """
 
 from airflow.decorators import dag
-from airflow.providers.postgres.operators.postgres import PostgresOperator
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
+from airflow.providers.amazon.aws.operators.redshift_sql import RedshiftSQLOperator
 
 # adjust for other database types
-from cosmos.profiles import PostgresUserPasswordProfileMapping
+from cosmos.profiles import RedshiftUserPasswordProfileMapping
 from pendulum import datetime
 import os
 
 YOUR_NAME = "marco"
-CONNECTION_ID = "redshift"
+CONNECTION_ID = "redshift-datalake-prod"
 DB_NAME = "prod"
 SCHEMA_NAME = "public"
 MODEL_TO_QUERY = "model2"
@@ -28,7 +28,7 @@ DBT_EXECUTABLE_PATH = f"{os.environ['AIRFLOW_HOME']}/dbt_venv/bin/dbt"
 profile_config = ProfileConfig(
     profile_name="default",
     target_name="dev",
-    profile_mapping=PostgresUserPasswordProfileMapping(
+    profile_mapping=RedshiftUserPasswordProfileMapping(
         conn_id=CONNECTION_ID,
         profile_args={"schema": SCHEMA_NAME},
     ),
@@ -57,9 +57,9 @@ def my_simple_dbt_dag():
         default_args={"retries": 2},
     )
 
-    query_table = PostgresOperator(
+    query_table = RedshiftSQLOperator(
         task_id="query_table",
-        postgres_conn_id=CONNECTION_ID,
+        redshift_conn_id=CONNECTION_ID,
         sql=f"SELECT * FROM {DB_NAME}.{SCHEMA_NAME}.{MODEL_TO_QUERY}",
     )
 
