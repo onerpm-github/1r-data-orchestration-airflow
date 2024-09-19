@@ -48,11 +48,14 @@ execution_config = ExecutionConfig(
 def my_simple_dbt_dag():
     transform_data = DbtTaskGroup(
         group_id="transform_data",
-        project_config=ProjectConfig(DBT_PROJECT_PATH),
+        project_config=ProjectConfig(
+            DBT_PROJECT_PATH,
+            skip_project_validation=True,
+        ),
         profile_config=profile_config,
         execution_config=execution_config,
         operator_args={
-            "vars": '{"my_name": {{ params.my_name }} }',
+            "vars": '{"my_name": "{{ params.my_name }}" }',
         },
         default_args={"retries": 2},
     )
