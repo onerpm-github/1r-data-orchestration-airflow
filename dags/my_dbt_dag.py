@@ -19,7 +19,7 @@ YOUR_NAME = "marco"
 CONNECTION_ID = "redshift-datalake-prod"
 DB_NAME = "prod"
 SCHEMA_NAME = "public"
-MODEL_TO_QUERY = "model2"
+MODEL_TO_QUERY = "campaign_performance"
 # The path to the dbt project
 DBT_PROJECT_PATH = f"{os.environ['AIRFLOW_HOME']}/dags/dbt/my_simple_dbt_project"
 # The path where Cosmos will find the dbt executable
@@ -44,7 +44,7 @@ def get_df_from_db():
     hook = RedshiftSQLHook(redshift_conn_id=CONNECTION_ID)
     connection = hook.get_conn()
     cursor = connection.cursor()
-    cursor.execute(f"SELECT * FROM {DB_NAME}.{SCHEMA_NAME}.{MODEL_TO_QUERY}")
+    cursor.execute(f"SELECT * FROM {DB_NAME}.{SCHEMA_NAME}.{MODEL_TO_QUERY} limit 10")
     records = cursor.fetchall()
     return records
 
