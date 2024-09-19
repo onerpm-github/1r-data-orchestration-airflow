@@ -59,7 +59,6 @@ def my_simple_dbt_dag():
         group_id="transform_data",
         project_config=ProjectConfig(
             DBT_PROJECT_PATH,
-            skip_project_validation=True,
         ),
         profile_config=profile_config,
         execution_config=execution_config,
