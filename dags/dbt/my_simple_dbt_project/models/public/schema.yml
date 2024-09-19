@@ -1,0 +1,9 @@
+
+version: 2
+
+models:
+  - name: campaign_performance
+    description: "A table to build a Campaign Performance dashboard"
+    config:
+      grants:
+        select: ['diego', 'datalake', 'datapipe_dev']
