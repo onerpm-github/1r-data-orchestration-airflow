@@ -7,7 +7,8 @@ an Airflow connection and injecting a variable into the dbt project.
 
 from airflow.decorators import dag
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
-from airflow.providers.amazon.aws.operators.redshift_sql import RedshiftSQLOperator
+from airflow.providers.amazon.aws.hooks.redshift_sql import RedshiftSQLHook
+from airflow.operators.python import PythonOperator
 
 # adjust for other database types
 from cosmos.profiles import RedshiftUserPasswordProfileMapping
@@ -39,6 +40,14 @@ execution_config = ExecutionConfig(
 )
 
 
+def get_df_from_db():
+    hook = RedshiftSQLHook(redshift_conn_id=CONNECTION_ID)
+    connection = hook.get_conn()
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT * FROM {DB_NAME}.{SCHEMA_NAME}.{MODEL_TO_QUERY}")
+    records = cursor.fetchall()
+    return records
+
 @dag(
     start_date=datetime(2023, 8, 1),
     schedule=None,
@@ -60,10 +69,10 @@ def my_simple_dbt_dag():
         default_args={"retries": 2},
     )
 
-    query_table = RedshiftSQLOperator(
+    query_table = PythonOperator(
         task_id="query_table",
-        redshift_conn_id=CONNECTION_ID,
-        sql=f"SELECT * FROM {DB_NAME}.{SCHEMA_NAME}.{MODEL_TO_QUERY}",
+        python_callable=get_df_from_db,
+        provide_context=True,
     )
 
     transform_data >> query_table
