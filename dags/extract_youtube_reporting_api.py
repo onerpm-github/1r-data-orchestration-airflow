@@ -275,6 +275,7 @@ dag = DAG(
     default_args=default_args,
     max_active_runs=1,
     schedule_interval=timedelta(days=1),
+    catchup=False,
 )
 
 content_owners = {
