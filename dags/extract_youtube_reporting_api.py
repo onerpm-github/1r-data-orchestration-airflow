@@ -167,7 +167,7 @@ def get_report(content_owner, network):
         'content_owner_asset_combined_a2',
         'content_owner_asset_a2',
         'content_owner_video_metadata_a3',
-
+        'content_owner_active_claims_a2',
     ]
 
     job_count = 0
@@ -226,8 +226,12 @@ def get_report(content_owner, network):
                         time.sleep(10)
                         print(f"The report {report_type} created at {report_create_time_w_dash} has been downloaded and uploaded to 1r-data-lake/{s3_key_input}.")
 
+                        if report_type == 'content_owner_active_claims_a2': # let's download only the first report
+                            break
+
                     else:
                         print(f"The report {report_type} created at {report_create_time_w_dash} is already in S3. It is in the key: {s3_key_input}")
+
             else:
                 print(f"The report {report_type} has no available reports.")
 
